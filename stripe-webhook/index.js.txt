@@ -1,0 +1,30 @@
+const express = require('express');
+const Stripe = require('stripe');
+const bodyParser = require('body-parser');
+
+const app = express();
+const stripe = new Stripe('pk_live_51SwK5iPAr5nVNLcgOAsFwpEWgbNywXgtP7cBn4FJjFaJ17oT0lIpVqqgdWVW4WuW6KlcibQI12TnTzWXoGAukvIj00ECUwfV3z'); // tu Stripe España
+
+app.use(bodyParser.json());
+
+app.post('/stripe', async (req, res) => {
+  const event = req.body;
+
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+
+    if (paymentIntent.metadata?.country === 'IT') {
+      await stripe.transfers.create({
+        amount: paymentIntent.amount,
+        currency: 'eur',
+        destination: 'acct_1SwL3dAS3TShC0qA', // tu Connect italiana
+      });
+      console.log('Transferencia a Italia realizada');
+    }
+  }
+
+  res.status(200).json({ received: true });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Webhook escuchando en puerto ${PORT}`));
