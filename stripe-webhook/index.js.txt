@@ -3,7 +3,7 @@ const Stripe = require('stripe');
 const bodyParser = require('body-parser');
 
 const app = express();
-const stripe = new Stripe('pk_live_51SwK5iPAr5nVNLcgOAsFwpEWgbNywXgtP7cBn4FJjFaJ17oT0lIpVqqgdWVW4WuW6KlcibQI12TnTzWXoGAukvIj00ECUwfV3z'); // tu Stripe España
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.use(bodyParser.json());
 
@@ -28,3 +28,4 @@ app.post('/stripe', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Webhook escuchando en puerto ${PORT}`));
+
